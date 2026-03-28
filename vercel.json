@@ -1,0 +1,26 @@
+{
+  "rewrites": [{ "source": "/(.*)", "destination": "/index.html" }],
+  "headers": [
+    {
+      "source": "/(.*)",
+      "headers": [
+        {
+          "key": "Access-Control-Allow-Origin",
+          "value": "https://os.frontiertower.io"
+        },
+        {
+          "key": "Content-Security-Policy",
+          "value": "frame-ancestors https://os.frontiertower.io https://sandbox.os.frontiertower.io http://localhost:*"
+        },
+        {
+          "key": "X-Content-Type-Options",
+          "value": "nosniff"
+        },
+        {
+          "key": "Referrer-Policy",
+          "value": "strict-origin-when-cross-origin"
+        }
+      ]
+    }
+  ]
+}
