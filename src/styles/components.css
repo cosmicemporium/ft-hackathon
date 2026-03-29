@@ -636,8 +636,8 @@
 
 .slot-picker-date input[type="date"] {
   width: 100%;
-  background: #232324;
-  border: 1px solid var(--accent);
+  background: var(--bg-input);
+  border: 1px solid var(--border);
   color: #FFFFFF;
   color-scheme: dark;
 }
