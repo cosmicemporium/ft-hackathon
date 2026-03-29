@@ -28,7 +28,6 @@ export const TOWER_FLOORS: TowerFloor[] = [
   { id: 'floor-10', label: 'Floor 10 — Frontier @ Accelerate', description: 'Accelerator program space' },
   { id: 'floor-11', label: 'Floor 11 — Health & Longevity', description: 'Health science and longevity research' },
   { id: 'floor-12', label: 'Floor 12 — Ethereum & Decentralized Tech', description: 'Ethereum and decentralized technologies' },
-  { id: 'floor-13', label: 'Floor 13 — Frontier Labs', description: 'Experimental research and frontier science' },
   { id: 'floor-14', label: 'Floor 14 — Human Flourishing', description: 'Human flourishing and wellbeing' },
   { id: 'floor-15', label: 'Floor 15 — Coworking & The Library', description: 'Coworking space and library' },
   { id: 'floor-16', label: 'Floor 16 — d/acc Lounge', description: 'Cross-pollination lounge for the community' },
