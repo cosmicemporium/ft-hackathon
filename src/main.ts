@@ -1,14 +1,15 @@
 import './styles/global.css';
 import './styles/components.css';
-import { initSDK, checkIsAdmin, getCurrentUser, getWalletAddress, getFormattedBalance, ensureConfig } from './sdk';
+import { initSDK, getCurrentUser, getWalletAddress, getFormattedBalance, ensureConfig, seedMockData, getMemberStats } from './sdk';
 import { addRoute, startRouter } from './router';
-import { setState } from './state';
+import { setState, getState } from './state';
 import { renderNavBar } from './components/nav-bar';
-import { renderMemberDashboard } from './views/member-dashboard';
-import { renderCreateReferral } from './views/create-referral';
-import { renderReferralDetail } from './views/referral-detail';
-import { renderAdminDashboard } from './views/admin-dashboard';
-import { renderAdminReferralDetail } from './views/admin-referral-detail';
+import { renderGuestForm } from './views/guest-form';
+import { renderGuestSuccess } from './views/guest-success';
+import { renderMemberQueue } from './views/member-queue';
+import { renderRequestDetail } from './views/request-detail';
+import { renderMyAccepted } from './views/my-accepted';
+import { renderScanComplete } from './views/scan-complete';
 
 async function boot() {
   const app = document.getElementById('app')!;
@@ -18,62 +19,70 @@ async function boot() {
     initSDK();
 
     // Load user data in parallel
-    const [user, walletAddress, balance, isAdmin] = await Promise.all([
+    const [user, walletAddress, balance] = await Promise.all([
       getCurrentUser(),
       getWalletAddress(),
       getFormattedBalance(),
-      checkIsAdmin(),
     ]);
 
-    // Seed config if needed
     await ensureConfig();
+    await seedMockData();
+
+    const stats = await getMemberStats(user.id);
 
     setState({
+      isGuestMode: true,
       userName: `${user.firstName} ${user.lastName}`,
       userEmail: user.email,
       userId: user.id,
       walletAddress,
       balanceFormatted: balance.total,
-      isAdmin,
+      memberStats: stats,
     });
 
-    // Set up routes
+    // Guest routes
+    addRoute('/guest', () => {
+      renderGuestForm(app);
+      renderNavBar(document.body);
+    });
+
+    addRoute('/guest/success/:id', (params) => {
+      renderGuestSuccess(app, params);
+      renderNavBar(document.body);
+    });
+
+    // Member routes
     addRoute('/', () => {
-      renderMemberDashboard(app);
-      renderNavBar(document.body);
-    });
-
-    addRoute('/create', () => {
-      renderCreateReferral(app);
-      renderNavBar(document.body);
-    });
-
-    addRoute('/referral/:id', (params) => {
-      renderReferralDetail(app, params);
-      renderNavBar(document.body);
-    });
-
-    addRoute('/admin', () => {
-      if (!isAdmin) {
-        window.location.hash = '/';
+      if (getState().isGuestMode) {
+        window.location.hash = '/guest';
         return;
       }
-      renderAdminDashboard(app);
+      renderMemberQueue(app);
       renderNavBar(document.body);
     });
 
-    addRoute('/admin/referral/:id', (params) => {
-      if (!isAdmin) {
-        window.location.hash = '/';
-        return;
-      }
-      renderAdminReferralDetail(app, params);
+    addRoute('/request/:id', (params) => {
+      renderRequestDetail(app, params);
+      renderNavBar(document.body);
+    });
+
+    addRoute('/accepted', () => {
+      renderMyAccepted(app);
+      renderNavBar(document.body);
+    });
+
+    addRoute('/scan', () => {
+      renderScanComplete(app);
       renderNavBar(document.body);
     });
 
     startRouter();
+
+    // Default to guest mode
+    if (!window.location.hash || window.location.hash === '#/') {
+      window.location.hash = '/guest';
+    }
   } catch (err) {
-    // If not in Frontier app, renderStandaloneMessage already handled it
     console.error('Boot failed:', err);
   }
 }

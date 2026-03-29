@@ -1,22 +1,26 @@
+import type { MemberStats } from './types';
+
 type Listener = () => void;
 
 export interface AppState {
-  isAdmin: boolean;
+  isGuestMode: boolean;
   userName: string;
   userEmail: string;
   userId: number;
   walletAddress: string;
   balanceFormatted: string;
+  memberStats: MemberStats;
   currentView: string;
 }
 
 const state: AppState = {
-  isAdmin: false,
+  isGuestMode: true,
   userName: '',
   userEmail: '',
   userId: 0,
   walletAddress: '',
   balanceFormatted: '',
+  memberStats: { acceptances: 0, completions: 0, badge: 'none' },
   currentView: '/',
 };
 

@@ -9,9 +9,41 @@
   background: var(--bg-secondary);
   border-top: 1px solid var(--border);
   display: flex;
-  justify-content: space-around;
-  padding: 8px 0;
+  flex-direction: column;
+  align-items: center;
+  padding: 6px 12px 8px;
+  gap: 6px;
   z-index: 100;
+}
+
+.mode-toggle {
+  display: flex;
+  background: var(--bg-primary);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-full);
+  padding: 2px;
+  width: fit-content;
+}
+
+.mode-btn {
+  background: none;
+  color: var(--text-muted);
+  padding: 5px 20px;
+  border-radius: var(--radius-full);
+  font-size: 12px;
+  font-weight: 600;
+  transition: all var(--transition);
+}
+
+.mode-btn.active {
+  background: var(--accent);
+  color: white;
+}
+
+.nav-items {
+  display: flex;
+  justify-content: space-around;
+  width: 100%;
 }
 
 .nav-item {
@@ -21,7 +53,7 @@
   gap: 2px;
   background: none;
   color: var(--text-muted);
-  padding: 6px 16px;
+  padding: 4px 16px;
   border-radius: var(--radius-sm);
   font-size: 11px;
   font-weight: 500;
@@ -33,7 +65,7 @@
 }
 
 .nav-item .nav-icon {
-  font-size: 20px;
+  font-size: 18px;
   line-height: 1;
 }
 
@@ -448,4 +480,190 @@
   font-size: 13px;
   color: var(--text-secondary);
   margin-top: 2px;
+}
+
+/* ── Slot Picker ── */
+.slot-picker-row {
+  display: flex;
+  gap: 6px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.slot-picker-row input[type="date"] {
+  flex: 1;
+  min-width: 130px;
+}
+
+.slot-picker-row select {
+  width: auto;
+  min-width: 90px;
+  padding: 10px 8px;
+}
+
+.slot-add-btn {
+  background: var(--accent);
+  color: white;
+  width: 40px;
+  height: 40px;
+  border-radius: var(--radius-sm);
+  font-size: 20px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.slot-chips {
+  margin: 12px 0 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.slot-chip {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 10px 12px;
+  font-size: 13px;
+}
+
+.slot-remove {
+  background: none;
+  color: var(--danger);
+  font-size: 18px;
+  padding: 0 4px;
+}
+
+.slot-empty {
+  color: var(--text-muted);
+  font-size: 13px;
+  text-align: center;
+  padding: 8px;
+}
+
+/* ── Slot Cards (member detail) ── */
+.slot-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  padding: 14px 16px;
+  margin-bottom: 8px;
+  cursor: pointer;
+  transition: all var(--transition);
+}
+
+.slot-card:hover {
+  border-color: var(--accent);
+  background: var(--accent-subtle);
+}
+
+.slot-card-date {
+  font-weight: 600;
+  font-size: 14px;
+  margin-bottom: 2px;
+}
+
+.slot-card-time {
+  font-size: 13px;
+  color: var(--text-secondary);
+}
+
+/* ── Member Badge ── */
+.member-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 2px 8px;
+  border-radius: var(--radius-full);
+  font-size: 11px;
+  font-weight: 600;
+  background: var(--accent-subtle);
+  color: var(--accent);
+  vertical-align: middle;
+  margin-left: 6px;
+}
+
+/* ── Declined Card ── */
+.declined-card {
+  opacity: 0.55;
+}
+
+.declined-tag {
+  font-size: 11px;
+  color: var(--text-muted);
+  font-style: italic;
+}
+
+/* ── Floor Checklist ── */
+.floor-checklist {
+  max-height: 240px;
+  overflow-y: auto;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  background: var(--bg-card);
+}
+
+.floor-option {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 10px 12px;
+  border-bottom: 1px solid var(--border);
+  cursor: pointer;
+  transition: background var(--transition);
+}
+
+.floor-option:last-child {
+  border-bottom: none;
+}
+
+.floor-option:hover {
+  background: var(--bg-card-hover);
+}
+
+.floor-option input[type="checkbox"] {
+  width: 18px;
+  height: 18px;
+  margin-top: 2px;
+  flex-shrink: 0;
+  accent-color: var(--accent);
+}
+
+.floor-option-info {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+}
+
+.floor-option-label {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text-primary);
+}
+
+.floor-option-desc {
+  font-size: 11px;
+  color: var(--text-muted);
+}
+
+/* ── Floor Tags ── */
+.floor-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  margin-top: 4px;
+}
+
+.floor-tag {
+  font-size: 11px;
+  background: var(--accent-subtle);
+  color: var(--accent);
+  padding: 2px 8px;
+  border-radius: var(--radius-full);
 }
