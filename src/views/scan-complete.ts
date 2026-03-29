@@ -11,28 +11,30 @@ export async function renderScanComplete(container: HTMLElement) {
   function render() {
     container.innerHTML = `
       <div class="page">
-        <div class="page-header">
+        <div class="page-header motion-reveal --visible">
           <h1>Complete Request</h1>
         </div>
 
-        <p style="color: var(--text-secondary); font-size: 14px; margin-bottom: 20px;">
+        <p style="font-family: var(--font-expressive); color: var(--text-secondary); font-size: 14px; margin-bottom: 24px;" class="motion-reveal --visible" style="transition-delay: 50ms;">
           Scan the guest's QR code or enter their request code to mark a visit as completed.
         </p>
 
-        <div class="card" style="margin-bottom: 20px; text-align: center;">
+        <div class="card motion-reveal --visible" style="margin-bottom: 24px; text-align: center; transition-delay: 100ms;">
           <div id="camera-area" style="margin-bottom: 16px;">
             <button class="btn-primary" id="start-scan" style="margin-bottom: 12px;">
               Open Camera
             </button>
-            <video id="scan-video" style="width: 100%; max-width: 300px; border-radius: 12px; display: none;" playsinline></video>
+            <video id="scan-video" style="width: 100%; border-radius: 8px; border: 1px solid var(--border); display: none;" playsinline></video>
             <canvas id="scan-canvas" style="display: none;"></canvas>
           </div>
 
-          <div style="color: var(--text-muted); font-size: 13px; margin: 12px 0;">or enter code manually</div>
+          <div class="glow-line" style="margin: 16px 0;"></div>
+
+          <p style="font-family: var(--font-brutalist); font-size: 10px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.15em; margin-bottom: 12px;">Or enter code manually</p>
 
           <div style="display: flex; gap: 8px;">
-            <input type="text" id="manual-code" placeholder="Request code (e.g. A1B2C3D4)" style="text-transform: uppercase; font-family: monospace; letter-spacing: 1px;" />
-            <button class="btn-primary" id="submit-code" style="width: auto; padding: 12px 20px;">Go</button>
+            <input type="text" id="manual-code" placeholder="A1B2C3D4" style="text-transform: uppercase; font-family: var(--font-brutalist); letter-spacing: 0.1em;" />
+            <button class="btn-primary" id="submit-code" style="width: auto; padding: 12px 24px;">Go</button>
           </div>
         </div>
 
@@ -77,7 +79,6 @@ export async function renderScanComplete(container: HTMLElement) {
     canvas.height = video.videoHeight;
     ctx.drawImage(video, 0, 0);
 
-    // Try to detect QR code using BarcodeDetector API if available
     if ('BarcodeDetector' in window) {
       const detector = new (window as any).BarcodeDetector({ formats: ['qr_code'] });
       detector.detect(canvas).then((barcodes: any[]) => {
@@ -92,7 +93,6 @@ export async function renderScanComplete(container: HTMLElement) {
         if (scanning) requestAnimationFrame(scanFrame);
       });
     } else {
-      // Fallback: no native QR detection, just keep showing camera
       if (scanning) requestAnimationFrame(scanFrame);
     }
   }
@@ -113,14 +113,12 @@ export async function renderScanComplete(container: HTMLElement) {
       return;
     }
 
-    // Try to find request by short ID prefix
     const all = await getAllRequests();
     const match = all.find((r) => r.id.toUpperCase().startsWith(code) || shortId(r.id) === code);
 
     if (match) {
       await completeRequest(match.id);
     } else {
-      // Try as full UUID
       await completeRequest(code.toLowerCase());
     }
   }
@@ -133,27 +131,25 @@ export async function renderScanComplete(container: HTMLElement) {
       const request = await getRequestById(requestId);
       if (!request) {
         resultArea.innerHTML = `
-          <div class="card" style="border-color: var(--danger);">
-            <p style="color: var(--danger); font-weight: 600;">Request not found</p>
-            <p style="color: var(--text-muted); font-size: 13px; margin-top: 4px;">Check the code and try again</p>
+          <div class="card" style="border-color: var(--discord); border-left: 3px solid var(--discord);">
+            <p style="font-family: var(--font-monument); color: var(--discord); font-weight: 700; text-transform: uppercase; font-size: 14px;">Not Found</p>
+            <p style="font-family: var(--font-expressive); color: var(--text-muted); font-size: 13px; margin-top: 6px;">Check the code and try again</p>
           </div>`;
         return;
       }
 
       if (request.status === 'completed') {
         resultArea.innerHTML = `
-          <div class="card" style="border-color: var(--warning);">
-            <p style="color: var(--warning); font-weight: 600;">Already completed</p>
-            <p style="color: var(--text-muted); font-size: 13px; margin-top: 4px;">${request.guestName}'s ${TYPE_LABELS[request.type].toLowerCase()} was already marked done</p>
+          <div class="card" style="border-color: var(--warning); border-left: 3px solid var(--warning);">
+            <p style="font-family: var(--font-monument); color: var(--warning); font-weight: 700; text-transform: uppercase; font-size: 14px;">Already Completed</p>
+            <p style="font-family: var(--font-expressive); color: var(--text-muted); font-size: 13px; margin-top: 6px;">${request.guestName}'s ${TYPE_LABELS[request.type].toLowerCase()} was already marked done</p>
           </div>`;
         return;
       }
 
-      // Get config for reward amount
       const config = await getConfig();
       const walletAddress = state.walletAddress || await getWalletAddress();
 
-      // Send payout
       let txHash = '';
       try {
         const receipt = await sendPayout(walletAddress, config.defaultRewardAmount, config.rewardCurrency);
@@ -162,7 +158,6 @@ export async function renderScanComplete(container: HTMLElement) {
         console.error('Payout failed:', err);
       }
 
-      // Mark complete
       await updateRequest(requestId, {
         status: 'completed',
         completedAt: new Date().toISOString(),
@@ -173,22 +168,21 @@ export async function renderScanComplete(container: HTMLElement) {
         acceptedById: request.acceptedById || state.userId,
       });
 
-      // Increment stats
       const stats = await incrementCompletion(state.userId);
       setState({ memberStats: stats });
 
       resultArea.innerHTML = `
-        <div class="card" style="border-color: var(--success); text-align: center;">
-          <div style="font-size: 36px; margin-bottom: 8px;">🎉</div>
-          <p style="color: var(--success); font-weight: 700; font-size: 18px;">Completed!</p>
-          <p style="color: var(--text-secondary); font-size: 14px; margin-top: 4px;">
+        <div class="card motion-reveal --visible" style="border-color: rgba(118, 74, 226, 0.25); text-align: center;">
+          <div style="font-family: var(--font-monument); font-size: var(--type-display); font-weight: 700; text-transform: uppercase; color: var(--accent); line-height: 1; margin-bottom: 4px; text-shadow: 0 0 30px rgba(118,74,226,0.4);">Done</div>
+          <div class="glow-line" style="margin: 12px auto; max-width: 80px;"></div>
+          <p style="font-family: var(--font-expressive); color: var(--text-secondary); font-size: 14px;">
             ${request.guestName}'s ${TYPE_LABELS[request.type].toLowerCase()}
           </p>
-          <div style="margin-top: 12px; padding-top: 12px; border-top: 1px solid var(--border);">
-            <p style="color: var(--accent); font-weight: 600;">+$${config.defaultRewardAmount} ${config.rewardCurrency}</p>
-            <p style="color: var(--text-muted); font-size: 12px; margin-top: 4px;">
-              ${stats.completions} total completion${stats.completions > 1 ? 's' : ''}
-              ${stats.badge !== 'none' ? ` · ${stats.badge} badge` : ''}
+          <div style="margin-top: 16px; padding-top: 16px; border-top: 1px solid var(--border);">
+            <p style="font-family: var(--font-monument); font-size: 24px; font-weight: 700; color: var(--accent); text-shadow: 0 0 20px rgba(118,74,226,0.4);">+$${config.defaultRewardAmount} ${config.rewardCurrency}</p>
+            <p style="font-family: var(--font-brutalist); font-size: 10px; color: var(--text-muted); margin-top: 8px; text-transform: uppercase; letter-spacing: 0.1em;">
+              ${stats.completions} completion${stats.completions > 1 ? 's' : ''}
+              ${stats.badge !== 'none' ? ` · ${stats.badge}` : ''}
             </p>
           </div>
         </div>`;
@@ -196,15 +190,14 @@ export async function renderScanComplete(container: HTMLElement) {
       showToast(`+$${config.defaultRewardAmount} ${config.rewardCurrency} earned!`);
     } catch (err) {
       resultArea.innerHTML = `
-        <div class="card" style="border-color: var(--danger);">
-          <p style="color: var(--danger); font-weight: 600;">Error</p>
-          <p style="color: var(--text-muted); font-size: 13px; margin-top: 4px;">${err}</p>
+        <div class="card" style="border-color: var(--discord); border-left: 3px solid var(--discord);">
+          <p style="font-family: var(--font-monument); color: var(--discord); font-weight: 700; text-transform: uppercase; font-size: 14px;">Error</p>
+          <p style="font-family: var(--font-expressive); color: var(--text-muted); font-size: 13px; margin-top: 6px;">${err}</p>
         </div>`;
     }
   }
 
   render();
 
-  // Cleanup camera on navigation
   return () => stopCamera();
 }

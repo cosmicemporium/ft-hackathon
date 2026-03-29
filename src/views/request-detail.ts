@@ -24,20 +24,22 @@ export async function renderRequestDetail(container: HTMLElement, params: Record
 
     container.innerHTML = `
       <div class="page">
-        <div class="page-header">
+        <div class="page-header motion-reveal --visible">
           <button class="back-btn" id="back">&larr;</button>
           <h1>Request Detail</h1>
         </div>
 
-        <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 16px;">
+        <div class="motion-reveal --visible" style="display: flex; align-items: center; gap: 8px; margin-bottom: 20px; transition-delay: 50ms;">
           <span class="type-badge">${TYPE_LABELS[request.type]}</span>
-          <span class="status-badge" style="background: ${statusColor}20; color: ${statusColor}">
+          <span class="status-badge" style="background: ${statusColor}15; color: ${statusColor}; border: 1px solid ${statusColor}30;">
             ${capitalize(request.status)}
           </span>
-          ${isMyRequest ? '<span class="status-badge" style="background: var(--accent-subtle); color: var(--accent);">Yours</span>' : ''}
+          ${isMyRequest ? '<span class="status-badge" style="background: var(--accent-subtle); color: var(--accent); border: 1px solid rgba(118,74,226,0.20);">Yours</span>' : ''}
         </div>
 
-        <div class="detail-section">
+        <div class="glow-line"></div>
+
+        <div class="detail-section motion-reveal --visible" style="transition-delay: 100ms;">
           <h3>Guest Info</h3>
           <div class="card">
             <div class="detail-row">
@@ -56,7 +58,7 @@ export async function renderRequestDetail(container: HTMLElement, params: Record
         </div>
 
         ${request.interestedFloors && request.interestedFloors.length > 0 ? `
-          <div class="detail-section">
+          <div class="detail-section motion-reveal --visible" style="transition-delay: 150ms;">
             <h3>Interested Floors</h3>
             <div class="card">
               <div class="floor-tags">
@@ -70,7 +72,7 @@ export async function renderRequestDetail(container: HTMLElement, params: Record
         ` : ''}
 
         ${request.interestedOffices && request.interestedOffices.length > 0 ? `
-          <div class="detail-section">
+          <div class="detail-section motion-reveal --visible" style="transition-delay: 150ms;">
             <h3>Interested Offices</h3>
             <div class="card">
               ${request.interestedOffices.map((oid) => {
@@ -78,7 +80,7 @@ export async function renderRequestDetail(container: HTMLElement, params: Record
                 return office ? `
                   <div class="detail-row">
                     <span class="detail-label">${office.label}</span>
-                    <span class="detail-value">${office.price}</span>
+                    <span class="detail-value" style="color: var(--accent);">${office.price}</span>
                   </div>` : '';
               }).join('')}
             </div>
@@ -86,12 +88,12 @@ export async function renderRequestDetail(container: HTMLElement, params: Record
         ` : ''}
 
         ${request.selectedSlot ? `
-          <div class="detail-section">
+          <div class="detail-section motion-reveal --visible" style="transition-delay: 200ms;">
             <h3>Scheduled</h3>
-            <div class="card">
+            <div class="card" style="border-color: rgba(118, 74, 226, 0.25);">
               <div class="detail-row">
                 <span class="detail-label">Time</span>
-                <span class="detail-value">${formatSlot(request.selectedSlot)}</span>
+                <span class="detail-value" style="color: var(--accent);">${formatSlot(request.selectedSlot)}</span>
               </div>
               ${request.acceptedBy ? `
                 <div class="detail-row">
@@ -104,9 +106,9 @@ export async function renderRequestDetail(container: HTMLElement, params: Record
         ` : ''}
 
         ${request.proposedSlot && request.status === 'proposed' ? `
-          <div class="detail-section">
+          <div class="detail-section motion-reveal --visible" style="transition-delay: 200ms;">
             <h3>Proposed Time</h3>
-            <div class="card" style="border-color: var(--purple);">
+            <div class="card" style="border-color: rgba(139, 92, 246, 0.3);">
               <div class="detail-row">
                 <span class="detail-label">Time</span>
                 <span class="detail-value">${formatSlot(request.proposedSlot)}</span>
@@ -120,26 +122,22 @@ export async function renderRequestDetail(container: HTMLElement, params: Record
         ` : ''}
 
         ${request.status === 'open' ? `
-          <div class="detail-section">
+          <div class="detail-section motion-reveal --visible" style="transition-delay: 200ms;">
             <h3>Available Slots</h3>
-            <p style="font-size: 13px; color: var(--accent); margin-bottom: 10px;">Select a time slot to accept this request</p>
+            <p style="font-family: var(--font-expressive); font-size: 13px; color: var(--accent); margin-bottom: 12px;">Select a time slot to accept this request</p>
             <div id="slots-list"></div>
           </div>
           <div class="admin-actions" id="actions"></div>
         ` : ''}
 
         ${request.status === 'completed' ? `
-          <div class="detail-section">
+          <div class="detail-section motion-reveal --visible" style="transition-delay: 200ms;">
             <h3>Completed</h3>
-            <div class="card" style="border-color: var(--success);">
-              <div class="detail-row">
-                <span class="detail-label">Completed</span>
-                <span class="detail-value" style="color: var(--success);">✓ Done</span>
-              </div>
+            <div class="card" style="border-color: rgba(118, 74, 226, 0.25); text-align: center;">
+              <div style="font-family: var(--font-monument); font-size: 16px; font-weight: 700; text-transform: uppercase; color: var(--accent); margin-bottom: 8px;">Complete</div>
               ${request.rewardAmount ? `
-                <div class="detail-row">
-                  <span class="detail-label">Reward</span>
-                  <span class="detail-value" style="color: var(--success);">+$${request.rewardAmount} ${request.rewardCurrency}</span>
+                <div style="font-family: var(--font-monument); font-size: 24px; font-weight: 700; color: var(--accent); text-shadow: 0 0 20px rgba(118,74,226,0.4);">
+                  +$${request.rewardAmount} ${request.rewardCurrency}
                 </div>
               ` : ''}
             </div>
@@ -162,7 +160,7 @@ export async function renderRequestDetail(container: HTMLElement, params: Record
               <div class="slot-card-date">${formatSlotDate(slot.date)}</div>
               <div class="slot-card-time">${formatTime24to12(slot.startTime)} – ${formatTime24to12(slot.endTime)}</div>
             </div>
-            <span style="color: var(--accent); font-size: 13px; font-weight: 600;">Accept →</span>
+            <span style="font-family: var(--font-monument); color: var(--accent); font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em;">Accept →</span>
           </div>
         `;
         card.addEventListener('click', () => handleAccept(slot));
@@ -172,14 +170,12 @@ export async function renderRequestDetail(container: HTMLElement, params: Record
       // Action buttons
       const actionsEl = container.querySelector('#actions')!;
 
-      // Propose different time
       const proposeBtn = document.createElement('button');
       proposeBtn.className = 'btn-secondary';
       proposeBtn.textContent = 'Propose Different Time';
       proposeBtn.addEventListener('click', () => handlePropose());
       actionsEl.appendChild(proposeBtn);
 
-      // Decline
       if (!iDeclined) {
         const declineBtn = document.createElement('button');
         declineBtn.className = 'btn-danger';
@@ -188,7 +184,7 @@ export async function renderRequestDetail(container: HTMLElement, params: Record
         actionsEl.appendChild(declineBtn);
       } else {
         const tag = document.createElement('p');
-        tag.style.cssText = 'color: var(--text-muted); font-size: 13px; text-align: center;';
+        tag.style.cssText = 'font-family: var(--font-brutalist); color: var(--text-muted); font-size: 11px; text-align: center; text-transform: uppercase; letter-spacing: 0.05em;';
         tag.textContent = 'You previously passed on this request';
         actionsEl.appendChild(tag);
       }
@@ -197,13 +193,13 @@ export async function renderRequestDetail(container: HTMLElement, params: Record
     async function handleAccept(slot: TimeSlot) {
       showModal(
         'Accept This Slot?',
-        `<p style="color: var(--text-secondary); margin-bottom: 12px;">
-          You'll be hosting <strong>${request!.guestName}</strong> for a <strong>${TYPE_LABELS[request!.type].toLowerCase()}</strong>.
+        `<p style="font-family: var(--font-expressive); color: var(--text-secondary); margin-bottom: 14px;">
+          You'll be hosting <strong style="color: var(--text-primary);">${request!.guestName}</strong> for a <strong style="color: var(--accent);">${TYPE_LABELS[request!.type].toLowerCase()}</strong>.
         </p>
         <div class="card">
           <div class="detail-row">
             <span class="detail-label">When</span>
-            <span class="detail-value">${formatSlot(slot)}</span>
+            <span class="detail-value" style="color: var(--accent);">${formatSlot(slot)}</span>
           </div>
         </div>`,
         [

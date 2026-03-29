@@ -33,17 +33,17 @@ export async function renderMemberQueue(container: HTMLElement) {
 
       container.innerHTML = `
         <div class="page">
-          <div class="greeting">
+          <div class="greeting motion-reveal --visible">
             <div class="greeting-row">
               <img src="/assets/logomark.svg" alt="Frontier Tower" class="greeting-logo" />
               <div>
                 <h2>Hi, ${state.userName.split(' ')[0]} ${badgeHTML}</h2>
-                <div class="balance">${state.balanceFormatted || 'Loading balance...'}</div>
+                <div class="balance">${state.balanceFormatted || 'Loading...'}</div>
               </div>
             </div>
           </div>
 
-          <div class="stats-bar">
+          <div class="stats-bar motion-stagger --visible">
             <div class="stat-item">
               <div class="stat-value">${openRequests.length}</div>
               <div class="stat-label">Open</div>
@@ -58,27 +58,29 @@ export async function renderMemberQueue(container: HTMLElement) {
             </div>
           </div>
 
-          <div class="referral-link-box">
+          <div class="referral-link-box motion-reveal --visible" style="transition-delay: 100ms;">
             <label>Invite Guests to Frontier Tower</label>
             <div class="referral-link-row">
               <input type="text" readonly id="referral-link" value="${window.location.origin}/#/guest?ref=${encodeURIComponent(state.userName)}" />
               <button id="copy-referral">Copy</button>
             </div>
             ${platformReferral ? `
-              <div style="margin-top: 8px; font-size: 12px; color: var(--text-muted);">
-                Platform referrals: ${platformReferral.referralCount ?? 0} · Code: ${platformReferral.referralCode ?? '—'}
+              <div style="margin-top: 10px; font-family: var(--font-brutalist); font-size: 10px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.05em;">
+                Referrals: ${platformReferral.referralCount ?? 0} · Code: ${platformReferral.referralCode ?? '—'}
               </div>
             ` : ''}
           </div>
 
-          <div class="filter-tabs">
+          <div class="glow-line"></div>
+
+          <div class="filter-tabs" style="margin-top: 20px;">
             <button class="filter-tab ${activeFilter === 'all' ? 'active' : ''}" data-filter="all">All</button>
             <button class="filter-tab ${activeFilter === 'tour' ? 'active' : ''}" data-filter="tour">Tours</button>
             <button class="filter-tab ${activeFilter === 'office' ? 'active' : ''}" data-filter="office">Offices</button>
-            <button class="filter-tab ${activeFilter === 'membership' ? 'active' : ''}" data-filter="membership">Memberships</button>
+            <button class="filter-tab ${activeFilter === 'membership' ? 'active' : ''}" data-filter="membership">Members</button>
           </div>
 
-          <div id="request-list"></div>
+          <div id="request-list" class="motion-stagger --visible"></div>
 
           ${filtered.length === 0
             ? '<div class="empty-state"><p>No open requests right now</p></div>'
@@ -95,15 +97,15 @@ export async function renderMemberQueue(container: HTMLElement) {
         card.innerHTML = `
           <div class="referral-card-header">
             <span class="referral-card-name">${req.guestName}</span>
-            <span class="status-badge" style="background: ${statusColor}20; color: ${statusColor}">
+            <span class="status-badge" style="background: ${statusColor}15; color: ${statusColor}; border: 1px solid ${statusColor}30;">
               ${capitalize(req.status)}
             </span>
           </div>
           <div class="referral-card-meta">
             <span class="type-badge">${TYPE_ICONS[req.type]} ${TYPE_LABELS[req.type]}</span>
-            <span>${req.availableSlots.length} slot${req.availableSlots.length > 1 ? 's' : ''}</span>
-            <span>${timeAgo(req.createdAt)}</span>
-            ${declined ? '<span class="declined-tag">You passed</span>' : ''}
+            <span style="font-family: var(--font-brutalist); font-size: 11px;">${req.availableSlots.length} slot${req.availableSlots.length > 1 ? 's' : ''}</span>
+            <span style="font-family: var(--font-brutalist); font-size: 11px;">${timeAgo(req.createdAt)}</span>
+            ${declined ? '<span class="declined-tag">Passed</span>' : ''}
           </div>
         `;
         card.addEventListener('click', () => navigate(`/request/${req.id}`));
