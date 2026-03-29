@@ -30,8 +30,13 @@ export async function renderMemberDashboard(container: HTMLElement) {
       container.innerHTML = `
         <div class="page">
           <div class="greeting">
-            <h2>Hi, ${state.userName.split(' ')[0]}</h2>
-            <div class="balance">${state.balanceFormatted || 'Loading balance...'}</div>
+            <div class="greeting-row">
+              <img src="/assets/logomark.svg" alt="Frontier Tower" class="greeting-logo" />
+              <div>
+                <h2>Hi, ${state.userName.split(' ')[0]}</h2>
+                <div class="balance">${state.balanceFormatted || 'Loading balance...'}</div>
+              </div>
+            </div>
           </div>
 
           <div class="stats-bar">

@@ -24,6 +24,7 @@ export async function renderAdminDashboard(container: HTMLElement) {
       container.innerHTML = `
         <div class="page">
           <div class="page-header">
+            <img src="/assets/logomark.svg" alt="Frontier Tower" class="greeting-logo" />
             <h1>Admin Dashboard</h1>
           </div>
 

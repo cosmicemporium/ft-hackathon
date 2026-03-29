@@ -427,6 +427,18 @@
   margin-bottom: 20px;
 }
 
+.greeting-row {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.greeting-logo {
+  width: 44px;
+  height: 44px;
+  border-radius: var(--radius-sm);
+}
+
 .greeting h2 {
   font-size: 20px;
   font-weight: 700;
