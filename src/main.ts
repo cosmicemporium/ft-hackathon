@@ -4,12 +4,15 @@ import { initSDK, getCurrentUser, getWalletAddress, getFormattedBalance, ensureC
 import { addRoute, startRouter } from './router';
 import { setState, getState } from './state';
 import { renderNavBar } from './components/nav-bar';
+import { renderSplash } from './views/splash';
 import { renderGuestForm } from './views/guest-form';
 import { renderGuestSuccess } from './views/guest-success';
+import { renderGuestStatus } from './views/guest-status';
 import { renderMemberQueue } from './views/member-queue';
 import { renderRequestDetail } from './views/request-detail';
 import { renderMyAccepted } from './views/my-accepted';
 import { renderScanComplete } from './views/scan-complete';
+import { renderLeaderboard } from './views/leaderboard';
 
 async function boot() {
   const app = document.getElementById('app')!;
@@ -40,6 +43,14 @@ async function boot() {
       memberStats: stats,
     });
 
+    // Splash / landing
+    addRoute('/', () => {
+      renderSplash(app);
+      // Remove nav bar on splash
+      const existing = document.body.querySelector('.nav-bar');
+      if (existing) existing.remove();
+    });
+
     // Guest routes
     addRoute('/guest', () => {
       renderGuestForm(app);
@@ -51,12 +62,13 @@ async function boot() {
       renderNavBar(document.body);
     });
 
+    addRoute('/guest/status', () => {
+      renderGuestStatus(app);
+      renderNavBar(document.body);
+    });
+
     // Member routes
-    addRoute('/', () => {
-      if (getState().isGuestMode) {
-        window.location.hash = '/guest';
-        return;
-      }
+    addRoute('/member', () => {
       renderMemberQueue(app);
       renderNavBar(document.body);
     });
@@ -76,11 +88,16 @@ async function boot() {
       renderNavBar(document.body);
     });
 
+    addRoute('/leaderboard', () => {
+      renderLeaderboard(app);
+      renderNavBar(document.body);
+    });
+
     startRouter();
 
-    // Default to guest mode
+    // Default to splash
     if (!window.location.hash || window.location.hash === '#/') {
-      window.location.hash = '/guest';
+      window.location.hash = '/';
     }
   } catch (err) {
     console.error('Boot failed:', err);

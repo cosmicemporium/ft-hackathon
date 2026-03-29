@@ -6,16 +6,18 @@ export function renderNavBar(container: HTMLElement) {
 
   const guestItems = [
     { label: 'Request', icon: '📝', hash: '/guest' },
+    { label: 'Status', icon: '🔍', hash: '/guest/status' },
   ];
 
   const memberItems = [
-    { label: 'Queue', icon: '📋', hash: '/' },
+    { label: 'Queue', icon: '📋', hash: '/member' },
     { label: 'My Requests', icon: '✅', hash: '/accepted' },
     { label: 'Scan', icon: '📷', hash: '/scan' },
+    { label: 'Ranks', icon: '🏅', hash: '/leaderboard' },
   ];
 
   const items = state.isGuestMode ? guestItems : memberItems;
-  const currentHash = window.location.hash.slice(1) || (state.isGuestMode ? '/guest' : '/');
+  const currentHash = window.location.hash.slice(1) || '/';
 
   const nav = document.createElement('nav');
   nav.className = 'nav-bar';
@@ -32,7 +34,7 @@ export function renderNavBar(container: HTMLElement) {
       const mode = (btn as HTMLElement).dataset.mode;
       const isGuest = mode === 'guest';
       setState({ isGuestMode: isGuest });
-      navigate(isGuest ? '/guest' : '/');
+      navigate(isGuest ? '/guest' : '/member');
     });
   });
 
@@ -42,10 +44,7 @@ export function renderNavBar(container: HTMLElement) {
 
   items.forEach((item) => {
     const btn = document.createElement('button');
-    const isActive =
-      item.hash === '/' || item.hash === '/guest'
-        ? currentHash === item.hash
-        : currentHash.startsWith(item.hash);
+    const isActive = currentHash === item.hash || currentHash.startsWith(item.hash + '/');
     btn.className = `nav-item${isActive ? ' active' : ''}`;
     btn.innerHTML = `<span class="nav-icon">${item.icon}</span>${item.label}`;
     btn.addEventListener('click', () => navigate(item.hash));

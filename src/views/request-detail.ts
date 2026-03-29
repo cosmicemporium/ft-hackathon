@@ -146,7 +146,7 @@ export async function renderRequestDetail(container: HTMLElement, params: Record
       </div>
     `;
 
-    container.querySelector('#back')?.addEventListener('click', () => navigate('/'));
+    container.querySelector('#back')?.addEventListener('click', () => navigate('/member'));
 
     if (request.status === 'open') {
       // Render slot cards
@@ -288,7 +288,7 @@ export async function renderRequestDetail(container: HTMLElement, params: Record
         const updated = [...request!.declinedBy, state.userName];
         await updateRequest(request!.id, { declinedBy: updated });
         showToast('Passed on request');
-        navigate('/');
+        navigate('/member');
       } catch (err) {
         showToast(`Failed: ${err}`, 'error');
       }

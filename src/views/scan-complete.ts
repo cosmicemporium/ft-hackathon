@@ -1,7 +1,48 @@
 import { getState, setState } from '../state';
 import { getRequestById, getAllRequests, updateRequest, incrementCompletion, getConfig, sendPayout, getWalletAddress } from '../sdk';
 import { showToast } from '../components/toast';
-import { TYPE_LABELS, shortId } from '../utils';
+import { TYPE_LABELS, shortId, BADGE_LABELS, BADGE_ICONS } from '../utils';
+
+function createConfetti(container: HTMLElement) {
+  const colors = ['#764AE2', '#938DEE', '#ABF882', '#A86EDC', '#ffffff'];
+  const confettiContainer = document.createElement('div');
+  confettiContainer.className = 'confetti-container';
+
+  for (let i = 0; i < 60; i++) {
+    const piece = document.createElement('div');
+    piece.className = 'confetti-piece';
+    piece.style.setProperty('--x', `${Math.random() * 100}vw`);
+    piece.style.setProperty('--delay', `${Math.random() * 600}ms`);
+    piece.style.setProperty('--duration', `${1500 + Math.random() * 2000}ms`);
+    piece.style.setProperty('--rotation', `${Math.random() * 720 - 360}deg`);
+    piece.style.setProperty('--drift', `${Math.random() * 100 - 50}px`);
+    piece.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+    piece.style.width = `${6 + Math.random() * 6}px`;
+    piece.style.height = `${4 + Math.random() * 8}px`;
+    confettiContainer.appendChild(piece);
+  }
+
+  container.appendChild(confettiContainer);
+  setTimeout(() => confettiContainer.remove(), 4000);
+}
+
+function animateCounter(el: HTMLElement, target: number, prefix: string, suffix: string) {
+  const duration = 1200;
+  const start = performance.now();
+
+  function step(now: number) {
+    const elapsed = now - start;
+    const progress = Math.min(elapsed / duration, 1);
+    // Ease out expo
+    const eased = 1 - Math.pow(1 - progress, 3);
+    const current = Math.floor(eased * target);
+    el.textContent = `${prefix}${current}${suffix}`;
+    if (progress < 1) requestAnimationFrame(step);
+    else el.textContent = `${prefix}${target}${suffix}`;
+  }
+
+  requestAnimationFrame(step);
+}
 
 export async function renderScanComplete(container: HTMLElement) {
   const state = getState();
@@ -15,11 +56,11 @@ export async function renderScanComplete(container: HTMLElement) {
           <h1>Complete Request</h1>
         </div>
 
-        <p style="font-family: var(--font-expressive); color: var(--text-secondary); font-size: 14px; margin-bottom: 24px;" class="motion-reveal --visible" style="transition-delay: 50ms;">
+        <p style="font-family: var(--font-expressive); color: var(--text-secondary); font-size: 14px; margin-bottom: 24px;" class="motion-reveal --visible">
           Scan the guest's QR code or enter their request code to mark a visit as completed.
         </p>
 
-        <div class="card motion-reveal --visible" style="margin-bottom: 24px; text-align: center; transition-delay: 100ms;">
+        <div class="card motion-reveal --visible" style="margin-bottom: 24px; text-align: center;">
           <div id="camera-area" style="margin-bottom: 16px;">
             <button class="btn-primary" id="start-scan" style="margin-bottom: 12px;">
               Open Camera
@@ -131,8 +172,8 @@ export async function renderScanComplete(container: HTMLElement) {
       const request = await getRequestById(requestId);
       if (!request) {
         resultArea.innerHTML = `
-          <div class="card" style="border-color: var(--discord); border-left: 3px solid var(--discord);">
-            <p style="font-family: var(--font-monument); color: var(--discord); font-weight: 700; text-transform: uppercase; font-size: 14px;">Not Found</p>
+          <div class="card" style="border-left: 3px solid var(--danger);">
+            <p style="font-family: var(--font-monument); color: var(--danger); font-weight: 700; text-transform: uppercase; font-size: 14px;">Not Found</p>
             <p style="font-family: var(--font-expressive); color: var(--text-muted); font-size: 13px; margin-top: 6px;">Check the code and try again</p>
           </div>`;
         return;
@@ -140,7 +181,7 @@ export async function renderScanComplete(container: HTMLElement) {
 
       if (request.status === 'completed') {
         resultArea.innerHTML = `
-          <div class="card" style="border-color: var(--warning); border-left: 3px solid var(--warning);">
+          <div class="card" style="border-left: 3px solid var(--warning);">
             <p style="font-family: var(--font-monument); color: var(--warning); font-weight: 700; text-transform: uppercase; font-size: 14px;">Already Completed</p>
             <p style="font-family: var(--font-expressive); color: var(--text-muted); font-size: 13px; margin-top: 6px;">${request.guestName}'s ${TYPE_LABELS[request.type].toLowerCase()} was already marked done</p>
           </div>`;
@@ -171,27 +212,52 @@ export async function renderScanComplete(container: HTMLElement) {
       const stats = await incrementCompletion(state.userId);
       setState({ memberStats: stats });
 
+      const rewardNum = parseInt(config.defaultRewardAmount) || 10;
+      const badgeLabel = stats.badge !== 'none' ? `${BADGE_ICONS[stats.badge]} ${BADGE_LABELS[stats.badge]}` : '';
+
+      // Celebration!
       resultArea.innerHTML = `
-        <div class="card motion-reveal --visible" style="border-color: rgba(118, 74, 226, 0.25); text-align: center;">
-          <div style="font-family: var(--font-monument); font-size: var(--type-display); font-weight: 700; text-transform: uppercase; color: var(--accent); line-height: 1; margin-bottom: 4px; text-shadow: 0 0 30px rgba(118,74,226,0.4);">Done</div>
-          <div class="glow-line" style="margin: 12px auto; max-width: 80px;"></div>
-          <p style="font-family: var(--font-expressive); color: var(--text-secondary); font-size: 14px;">
-            ${request.guestName}'s ${TYPE_LABELS[request.type].toLowerCase()}
-          </p>
-          <div style="margin-top: 16px; padding-top: 16px; border-top: 1px solid var(--border);">
-            <p style="font-family: var(--font-monument); font-size: 24px; font-weight: 700; color: var(--accent); text-shadow: 0 0 20px rgba(118,74,226,0.4);">+$${config.defaultRewardAmount} ${config.rewardCurrency}</p>
-            <p style="font-family: var(--font-brutalist); font-size: 10px; color: var(--text-muted); margin-top: 8px; text-transform: uppercase; letter-spacing: 0.1em;">
-              ${stats.completions} completion${stats.completions > 1 ? 's' : ''}
-              ${stats.badge !== 'none' ? ` · ${stats.badge}` : ''}
-            </p>
+        <div class="celebration-card motion-reveal --visible">
+          <div class="celebration-glow"></div>
+          <div class="celebration-content">
+            <div class="celebration-check">✓</div>
+            <p class="celebration-title">Visit Complete!</p>
+            <p class="celebration-guest">${request.guestName}'s ${TYPE_LABELS[request.type].toLowerCase()}</p>
+
+            <div class="celebration-reward">
+              <p class="celebration-reward-label">Reward Earned</p>
+              <p class="celebration-reward-amount" id="reward-counter">+$0 ${config.rewardCurrency}</p>
+            </div>
+
+            <div class="celebration-stats">
+              <div class="celebration-stat">
+                <span class="celebration-stat-value">${stats.completions}</span>
+                <span class="celebration-stat-label">Total</span>
+              </div>
+              ${badgeLabel ? `
+                <div class="celebration-stat">
+                  <span class="celebration-stat-value" style="font-size: 20px;">${BADGE_ICONS[stats.badge]}</span>
+                  <span class="celebration-stat-label">${BADGE_LABELS[stats.badge]}</span>
+                </div>
+              ` : ''}
+            </div>
           </div>
         </div>`;
+
+      // Launch confetti
+      createConfetti(container);
+
+      // Animate the reward counter
+      const counterEl = resultArea.querySelector('#reward-counter') as HTMLElement;
+      if (counterEl) {
+        setTimeout(() => animateCounter(counterEl, rewardNum, '+$', ` ${config.rewardCurrency}`), 300);
+      }
 
       showToast(`+$${config.defaultRewardAmount} ${config.rewardCurrency} earned!`);
     } catch (err) {
       resultArea.innerHTML = `
-        <div class="card" style="border-color: var(--discord); border-left: 3px solid var(--discord);">
-          <p style="font-family: var(--font-monument); color: var(--discord); font-weight: 700; text-transform: uppercase; font-size: 14px;">Error</p>
+        <div class="card" style="border-left: 3px solid var(--danger);">
+          <p style="font-family: var(--font-monument); color: var(--danger); font-weight: 700; text-transform: uppercase; font-size: 14px;">Error</p>
           <p style="font-family: var(--font-expressive); color: var(--text-muted); font-size: 13px; margin-top: 6px;">${err}</p>
         </div>`;
     }
