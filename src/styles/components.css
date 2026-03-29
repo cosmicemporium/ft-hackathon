@@ -1370,38 +1370,192 @@
   }
 }
 
-/* ── Responsive: Small screens ── */
-@media (max-width: 360px) {
-  .stats-bar {
-    gap: 6px;
+/* ── Responsive: Standard mobile (≤480px) ── */
+@media (max-width: 480px) {
+  /* Splash */
+  .splash {
+    padding: 32px 20px;
   }
 
-  .stat-item {
-    padding: 12px 8px;
+  .splash-title {
+    font-size: clamp(2rem, 12vw, 3.5rem);
   }
 
-  .stat-value {
-    font-size: 22px;
+  .splash-logo {
+    width: 64px;
+    height: 64px;
   }
 
-  .stat-label {
+  .splash-desc {
+    font-size: 13px;
+  }
+
+  /* Nav — 4 items need to fit */
+  .nav-item {
+    padding: 4px 8px;
     font-size: 9px;
   }
 
+  .nav-item .nav-icon {
+    font-size: 16px;
+  }
+
+  .mode-btn {
+    padding: 5px 16px;
+    font-size: 10px;
+  }
+
+  /* Badge legend */
+  .badge-legend {
+    gap: 6px;
+  }
+
+  .badge-tier {
+    padding: 8px 8px;
+    gap: 6px;
+  }
+
+  .badge-tier-icon {
+    font-size: 16px;
+  }
+
+  .badge-tier-name {
+    font-size: 10px;
+  }
+
+  .badge-tier-req {
+    font-size: 9px;
+  }
+
+  /* Leaderboard */
+  .leaderboard-card {
+    padding: 12px 14px;
+  }
+
+  .leader-rank {
+    font-size: 14px;
+    min-width: 24px;
+  }
+
+  .leader-name {
+    font-size: 13px;
+  }
+
+  .leader-stats {
+    gap: 12px;
+  }
+
+  .leader-stat-value {
+    font-size: 14px;
+  }
+
+  /* Celebration */
+  .celebration-content {
+    padding: 24px 16px;
+  }
+
+  .celebration-title {
+    font-size: clamp(1.25rem, 5vw, 1.75rem);
+  }
+
+  .celebration-reward-amount {
+    font-size: 28px;
+  }
+
+  .celebration-check {
+    width: 48px;
+    height: 48px;
+    font-size: 24px;
+  }
+
+  .celebration-stat-value {
+    font-size: 20px;
+  }
+
+  /* Status progress */
+  .status-progress {
+    padding: 16px 0;
+  }
+
+  .progress-step {
+    min-width: 60px;
+  }
+
+  .progress-dot {
+    width: 14px;
+    height: 14px;
+  }
+
+  .progress-label {
+    font-size: 8px;
+  }
+
+  .progress-line {
+    min-width: 20px;
+  }
+
+  /* Referral link */
+  .referral-link-row {
+    flex-direction: column;
+  }
+
+  .referral-link-row button {
+    width: 100%;
+    text-align: center;
+  }
+
+  /* Slot picker — stack on small screens */
+  .slot-picker-time {
+    flex-wrap: wrap;
+  }
+
+  .slot-picker-time select {
+    min-width: calc(50% - 20px);
+  }
+
+  /* Floor checklist */
+  .floor-checklist {
+    max-height: 200px;
+  }
+
+  /* Dropdown */
+  .dropdown-body.--open {
+    max-height: 500px;
+  }
+}
+
+/* ── Responsive: Tiny screens (≤360px, iPhone SE) ── */
+@media (max-width: 360px) {
+  .stats-bar {
+    gap: 4px;
+  }
+
+  .stat-item {
+    padding: 10px 6px;
+  }
+
+  .stat-value {
+    font-size: 20px;
+  }
+
+  .stat-label {
+    font-size: 8px;
+  }
+
   .type-option {
-    padding: 18px 8px 14px;
+    padding: 14px 6px 12px;
   }
 
   .type-option .type-icon {
-    font-size: 26px;
+    font-size: 24px;
   }
 
   .type-option .type-label {
-    font-size: 11px;
+    font-size: 10px;
   }
 
   .referral-card {
-    padding: 14px;
+    padding: 12px;
   }
 
   .referral-link-row input {
@@ -1410,25 +1564,83 @@
   }
 
   .slot-picker-time select {
-    font-size: 13px;
-    padding: 12px 6px;
+    font-size: 12px;
+    padding: 10px 6px;
   }
 
   .greeting h2 {
-    font-size: 18px;
+    font-size: 16px;
+  }
+
+  .greeting-logo {
+    width: 40px;
+    height: 40px;
   }
 
   .modal-content {
-    padding: 20px 16px calc(16px + env(safe-area-inset-bottom, 0px));
+    padding: 20px 14px calc(14px + env(safe-area-inset-bottom, 0px));
   }
 
   .nav-item {
-    padding: 4px 10px;
-    font-size: 9px;
+    padding: 4px 6px;
+    font-size: 8px;
+  }
+
+  .nav-item .nav-icon {
+    font-size: 14px;
   }
 
   .mode-btn {
-    padding: 5px 14px;
+    padding: 4px 12px;
+    font-size: 9px;
+  }
+
+  /* Splash */
+  .splash-title {
+    font-size: 2rem;
+  }
+
+  .splash-tagline {
     font-size: 10px;
+    letter-spacing: 0.15em;
+  }
+
+  .splash-btn {
+    padding: 14px 20px;
+    font-size: 13px;
+  }
+
+  /* Badge legend stack on tiny */
+  .badge-legend {
+    flex-direction: column;
+  }
+
+  /* Leaderboard */
+  .leader-left {
+    gap: 10px;
+  }
+
+  .leader-name {
+    font-size: 12px;
+  }
+
+  .member-badge {
+    font-size: 8px;
+    padding: 1px 6px;
+  }
+
+  /* Celebration */
+  .celebration-reward-amount {
+    font-size: 24px;
+  }
+
+  .celebration-stats {
+    gap: 20px;
+  }
+
+  /* Status */
+  .progress-step {
+    min-width: 50px;
+    gap: 6px;
   }
 }
