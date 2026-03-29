@@ -9,17 +9,17 @@
 @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@100..900&family=Plus+Jakarta+Sans:ital,wght@0,200..800;1,200..800&family=Space+Mono:ital,wght@0,400;0,700;1,400&family=Space+Grotesk:wght@300..700&display=swap');
 
 :root {
-  /* ── Frontier Brand Mood ── */
-  --bg-primary: #0f0a1a;
-  --bg-secondary: #130e20;
-  --bg-card: #1a1128;
-  --bg-card-hover: #221938;
-  --bg-input: #130e20;
-  --border: #2d1f4e;
+  /* ── Frontier Brand Mood — matched to frontiertower.io ── */
+  --bg-primary: #0A0A0A;
+  --bg-secondary: #111111;
+  --bg-card: #19191A;
+  --bg-card-hover: #232324;
+  --bg-input: #111111;
+  --border: #333333;
   --border-focus: #764AE2;
-  --text-primary: #f0ecf8;
-  --text-secondary: #9a8cb8;
-  --text-muted: #5e4f7a;
+  --text-primary: #FFFFFF;
+  --text-secondary: #C8C8C8;
+  --text-muted: #777777;
   --accent: #764AE2;
   --accent-hover: #938DEE;
   --accent-light: #A86EDC;
