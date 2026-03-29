@@ -636,6 +636,17 @@
 
 .slot-picker-date input[type="date"] {
   width: 100%;
+  background: var(--bg-card);
+  border: 1px solid var(--accent);
+  color: #FFFFFF;
+  color-scheme: dark;
+}
+
+.slot-picker-date input[type="date"]::-webkit-calendar-picker-indicator {
+  filter: invert(1) brightness(2);
+  opacity: 1;
+  cursor: pointer;
+  padding: 4px;
 }
 
 .slot-picker-time {
